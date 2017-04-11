@@ -1,5 +1,6 @@
 import numpy as np
 
+
 # IBM translation model 1
 class IBM1():
     def __init__(self, french_vocab_size, english_vocab_size):
@@ -9,6 +10,7 @@ class IBM1():
                                                               size=[french_vocab_size, english_vocab_size]))
         # normalization
         self.prob_fr_given_eng /= np.sum(self.prob_fr_given_eng, axis=1, keepdims=True)
+        self.eps = 1e-6
 
     # one E and M step over corpora
     def train(self, french_sentences, english_sentences):
@@ -19,9 +21,9 @@ class IBM1():
                 denom = np.sum([self.prob_fr_given_eng[f_w, e_w] for e_w in e_sent])
                 for j, e_w in enumerate(e_sent):
                     # compute alignment posterior
-                    self.counts_fr_and_eng[f_w, e_w] += self.prob_fr_given_eng[f_w, e_w]/(denom + 1e-6)
+                    self.counts_fr_and_eng[f_w, e_w] += self.prob_fr_given_eng[f_w, e_w]/(denom + self.eps)
         # M-step:
-        self.prob_fr_given_eng = self.counts_fr_and_eng/np.sum(self.counts_fr_and_eng, axis=1, keepdims=True)
+        self.prob_fr_given_eng = self.counts_fr_and_eng/(np.sum(self.counts_fr_and_eng, axis=1, keepdims=True) + self.eps)
 
     def compute_log_likelihood(self, french_sentences, english_sentences):
         log_likelihood = 0

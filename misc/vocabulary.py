@@ -20,7 +20,7 @@ class Vocabulary:
             vocab = construct_vocabulary(train_data_path, word_preprocessor)
             write_vocabulary(vocab, vocab_file_path)
 
-        self.index_to_word, self.word_to_index, self.freq = self.read_vocabulary(vocab_file_path, max_size,
+        self.index_to_word, self.word_to_index, self.freq = read_vocabulary(vocab_file_path, max_size,
                                                                                    sep=sep, min_count=min_count,
                                                                                    add_special_symbols=add_special_symbols)
         self.special_symbols = SPECIAL_SYMBOLS
