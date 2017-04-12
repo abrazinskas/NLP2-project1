@@ -4,6 +4,7 @@ import itertools
 import errno
 import unicodedata
 import nltk
+from special_symbols import NULL_TOKEN
 tokenize = nltk.word_tokenize
 
 DEFAULT_WORD_PREPROCESSOR = lambda word: word
@@ -28,10 +29,12 @@ def multigen(gen_func):
             return gen_func(*self.__args, **self.__kwargs)
     return _multigen
 
-# tokenizes corpora into clean tokens and converts them to ids based on vocabulary
-# returns an array[french_sentences, english_sentences]
+# Tokenizes corpora into clean tokens and converts them to ids based on vocabulary. Returns a generate that generates
+# (french, english) sentence pairs. Adds NULL tokens to the beginning of English sentences if start_null_token is
+# set to true.
 @multigen
-def tokenize_corpora_to_ids(vocab_french, vocab_english, french_file_path, english_file_path, word_preprocessor=None):
+def tokenize_corpora_to_ids(vocab_french, vocab_english, french_file_path, english_file_path, word_preprocessor=None, \
+        start_null_token=True):
     word_preprocessor = word_preprocessor if word_preprocessor else DEFAULT_WORD_PREPROCESSOR
 
     with open(french_file_path) as french_file, open(english_file_path) as english_file:
@@ -47,11 +50,10 @@ def tokenize_corpora_to_ids(vocab_french, vocab_english, french_file_path, engli
                     if token != "":
                         french_token_ids.append(vocab_french.get_id(token))
 
-                # Parse the English sentence
+                # Parse the English sentence, start English sentences with the NULL token if start_null_token.
                 english_tokens = tokenize(deal_with_accents(english_sentence.strip().decode('utf-8', 'ignore').lower()))
-                english_token_ids = []
+                english_token_ids = [vocab_english.get_id(NULL_TOKEN)] if start_null_token else []
 
-                # Clean tokens and throw away empty ones.
                 for token in english_tokens:
                     token = word_preprocessor(token)
                     if token != "":
