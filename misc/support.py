@@ -1,7 +1,7 @@
 from utils import tokenize_corpora_to_ids
 import special_symbols
+from time import gmtime, strftime
 import re
-
 
 def train_model(model, vocab_french, vocab_english, french_file_path, english_file_path, iterations=10,
                 word_preprocessor=None):
@@ -37,3 +37,7 @@ def word_preprocessor(word):
     if len(word) == 1:
         word = re.sub(r'[^\daiu]', '', word)
     return word
+
+def log(log_string):
+    time_string = strftime("%H:%M:%S", gmtime())
+    print("%s: %s" % (time_string, log_string))
