@@ -7,10 +7,10 @@ def train_model(model, vocab_french, vocab_english, french_file_path, english_fi
                 word_preprocessor=None):
     # load data
     print 'pre-loading data into RAM'
-    french_sentences, english_sentences = tokenize_corpora_to_ids(vocab_french, vocab_english,
-                                                                  french_file_path=french_file_path,
-                                                                  english_file_path=english_file_path,
-                                                                  word_preprocessor=word_preprocessor)
+    parallel_corpus = tokenize_corpora_to_ids(vocab_french, vocab_english,
+                                              french_file_path=french_file_path,
+                                              english_file_path=english_file_path,
+                                              word_preprocessor=word_preprocessor)
     print 'done'
     print '----------'
 
@@ -19,8 +19,8 @@ def train_model(model, vocab_french, vocab_english, french_file_path, english_fi
     print '----------'
     for iter in range(iterations):
         print "iteration nr %d" % iter
-        model.train(french_sentences, english_sentences)
-        log_likelihood = model.compute_log_likelihood(french_sentences, english_sentences)
+        model.train(parallel_corpus)
+        log_likelihood = model.compute_log_likelihood(parallel_corpus)
         print "Log-likelihood is: %.2f" % log_likelihood
         print '----------'
 

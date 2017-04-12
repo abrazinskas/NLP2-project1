@@ -13,9 +13,9 @@ class IBM1():
         self.eps = 1e-6
 
     # one E and M step over corpora
-    def train(self, french_sentences, english_sentences):
+    def train(self, parallel_corpus):
         # E-step:
-        for f_sent, e_sent in zip(french_sentences, english_sentences):
+        for f_sent, e_sent in parallel_corpus:
             for i, f_w in enumerate(f_sent):
                 # pre-compute denom
                 denom = np.sum([self.prob_fr_given_eng[f_w, e_w] for e_w in e_sent])
@@ -25,9 +25,9 @@ class IBM1():
         # M-step:
         self.prob_fr_given_eng = self.counts_fr_and_eng/(np.sum(self.counts_fr_and_eng, axis=1, keepdims=True) + self.eps)
 
-    def compute_log_likelihood(self, french_sentences, english_sentences):
+    def compute_log_likelihood(self, parallel_corpus):
         log_likelihood = 0
-        for f_sent, e_sent in zip(french_sentences, english_sentences):
+        for f_sent, e_sent in parallel_corpus:
             for i, f_w in enumerate(f_sent):
                 temp_ll = 0
                 for j, e_w in enumerate(e_sent):
