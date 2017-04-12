@@ -113,7 +113,7 @@ def read_vocabulary(filename, max_size=None, min_count=5, sep=' ', add_special_s
             count = int(splt[1])
 
             # dropping infrequent words
-            if count >= min_count and i < max_size:
+            if count >= min_count and (max_size is None or i < max_size):
                 freq.append(count)
                 index_to_word.append(word)
             else:
