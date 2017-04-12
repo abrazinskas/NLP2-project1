@@ -6,6 +6,7 @@ from misc.support import log_info
 
 # Model hyperparameters
 num_iterations = 10
+max_vocab_size = 10000
 
 # Data files.
 french_file_path = "data/training/small/hansards.36.2.f"
@@ -15,9 +16,9 @@ english_vocab_path = "data/vocabulary/english.txt"
 
 # Load the vocabularies for English and French.
 vocab_french = Vocabulary(french_file_path, vocab_file_path=french_vocab_path, min_count=1,
-                          word_preprocessor=word_preprocessor, max_size=10000)
+                          word_preprocessor=word_preprocessor, max_size=max_vocab_size)
 vocab_english = Vocabulary(english_file_path, vocab_file_path=english_vocab_path, min_count=1,
-                           word_preprocessor=word_preprocessor, max_size=10000)
+                           word_preprocessor=word_preprocessor, max_size=max_vocab_size)
 
 # Set up the model.
 log_info("Setting up the model, French vocabulary size = %d, English vocabulary size = %d." % \
