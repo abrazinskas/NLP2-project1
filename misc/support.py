@@ -38,6 +38,6 @@ def word_preprocessor(word):
         word = re.sub(r'[^\daiu]', '', word)
     return word
 
-def log(log_string):
+def log_info(log_string):
     time_string = strftime("%H:%M:%S", gmtime())
-    print("%s: %s" % (time_string, log_string))
+    print("%s [INFO]: %s" % (time_string, log_string))
