@@ -3,14 +3,14 @@ import numpy as np
 class IBM2():
 
     def __init__(self, french_vocab_size, english_vocab_size, max_jump=10):
-        num_allowed_jumps = 2 * max_jump + 1
+        self.num_allowed_jumps = 2 * max_jump + 1
         self.expected_lexical_counts = np.zeros((french_vocab_size, english_vocab_size))
-        self.expected_jump_counts = np.zeros(num_allowed_jumps)
+        self.expected_jump_counts = np.zeros(self.num_allowed_jumps)
 
         # Initialize parameters uniformly. We have no prior knowledge. Note that these parameters
         # are not random and therefore EM will run deterministically.
         self.p_f_given_e = np.full((french_vocab_size, english_vocab_size), 1.0 / french_vocab_size)
-        self.jump_p = np.full(num_allowed_jumps, 1.0 / num_allowed_jumps)
+        self.jump_p = np.full(self.num_allowed_jumps, 1.0 / self.num_allowed_jumps)
 
         self.max_jump = max_jump
         self.epsilon = 1e-6
@@ -43,7 +43,7 @@ class IBM2():
                     # Consider the case that f_j was generated from e_i. Add to the expected count of this event
                     # occurring, weighted by the posterior probability.
                     self.expected_lexical_counts[f_j, e_i] += posterior_probs[i]
-                    self.expected_jump_counts[self.max_jump * 2 - delta % (self.max_jump * 2 + 1)] += posterior_probs[i]
+                    self.expected_jump_counts[self.jump_p_index(delta)] += posterior_probs[i]
 
         # Perform the maximization (M) step to update the parameters.
         self.p_f_given_e = self.expected_lexical_counts / (np.sum(self.expected_lexical_counts, \
@@ -66,9 +66,15 @@ class IBM2():
 
         return ll / num_data_points
 
-    # TODO I don't like the index calculation here.
+    # Returns the jump probability of a given delta.
     def jump_prob(self, delta):
-        return 0. if np.abs(delta) > self.max_jump else self.jump_p[self.max_jump * 2 - delta % (self.max_jump * 2 + 1)]
+        return 0. if np.abs(delta) > self.max_jump else self.jump_p[self.jump_p_index(delta)]
 
+    # Returns the index in the jump_p array of the given delta. Only works for valid values of delta given the
+    # max_jump setting.
+    def jump_p_index(self, delta):
+        return (self.max_jump * 2 - delta) % self.num_allowed_jumps
+
+    # Calculates the delta for a tuple (j, i, n, m).
     def delta(self, french_pos, eng_pos, french_len, eng_len):
         return int(eng_pos - np.floor(french_pos * (float(eng_len) / french_len)))
