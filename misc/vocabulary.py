@@ -8,6 +8,8 @@ from utils import create_folders_if_not_exist, deal_with_accents, DEFAULT_WORD_P
 from special_symbols import SPECIAL_SYMBOLS
 tokenize = nltk.word_tokenize
 
+UNK_TOKEN = "<UNK>"
+
 # a general purpose vocabulary class
 class Vocabulary:
     def __init__(self, train_data_path=None, vocab_file_path=None, max_size=None, sep=' ', min_count=5,
@@ -34,7 +36,10 @@ class Vocabulary:
             self.index_to_word.append(word)
 
     def get_word(self, id):
-        return self.index_to_word[id]
+        if id in self.index_to_word:
+            return self.index_to_word[id]
+        else:
+            return UNK_TOKEN
 
     # generic for words and ids
     def get_count(self, word_or_id):
@@ -42,7 +47,10 @@ class Vocabulary:
         return self.freq[id]
 
     def get_id(self, word):
-        return self.word_to_index[word]
+        if word in self.word_to_index:
+            return self.word_to_index[word]
+        else:
+            return self.word_to_index[UNK_TOKEN]
 
     def __len__(self):
         return len(self.index_to_word)
@@ -89,21 +97,35 @@ def write_vocabulary(vocab, output_file, sep=' ', include_special_symbols=True):
 # min_count: drop words from vocabulary that have count less than min_count
 # max_size: limit the vocabulary size (use only the top 'max_size' words in the vocabulary list)
 def read_vocabulary(filename, max_size=None, min_count=5, sep=' ', add_special_symbols=True):
-    index_to_word = []
-    freq = []
+
+    # Always have an <UNK> token that maps to any word we haven't seen before.
+    # It gets the frequency of all words we'd otherwise ignore due to frequency
+    # of the word being too low or the max_size of the vocabulary being exceeded.
+    # This frequency is updated later.
+    index_to_word = [UNK_TOKEN]
+    freq = [-1]
+
     with open(filename) as f:
-        for word in itertools.islice(f, 0, max_size):
-            splt=word.strip().split(sep)
+        unk_count = 0
+        for i, word in enumerate(f):
+            splt = word.strip().split(sep)
             word = splt[0]
             count = int(splt[1])
+
             # dropping infrequent words
-            if count >= min_count:
+            if count >= min_count and i < max_size:
                 freq.append(count)
                 index_to_word.append(word)
+            else:
+                unk_count += count
+
+        # Update the <UNK> frequency.
+        freq[0] = unk_count
+
     word_to_index = {}
     for i, w in enumerate(index_to_word):
         if w in word_to_index:
-            print" error in %s"%w
+            print" error in %s" % w
         word_to_index[w] = i
 
     # appending special symbols
@@ -116,4 +138,3 @@ def read_vocabulary(filename, max_size=None, min_count=5, sep=' ', add_special_s
             freq.append(1)  # 1 to avoid problems with sub-sampling (in division)
 
     return index_to_word, word_to_index, np.array(freq, dtype="float32")
-
