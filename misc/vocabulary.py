@@ -36,10 +36,7 @@ class Vocabulary:
             self.index_to_word.append(word)
 
     def get_word(self, id):
-        if id in self.index_to_word:
-            return self.index_to_word[id]
-        else:
-            return UNK_TOKEN
+        return self.index_to_word[id]
 
     # generic for words and ids
     def get_count(self, word_or_id):
