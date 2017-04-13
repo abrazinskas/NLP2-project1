@@ -6,11 +6,11 @@ from misc.support import log_info
 
 # Model hyperparameters
 num_iterations = 10
-max_vocab_size = 10000
+max_vocab_size = None
 
 # Data files.
-french_file_path = "data/training/small/hansards.36.2.f"
-english_file_path = "data/training/small/hansards.36.2.e"
+french_file_path = "data/training/hansards.36.2.f"
+english_file_path = "data/training/hansards.36.2.e"
 french_vocab_path = "data/vocabulary/french.txt"
 english_vocab_path = "data/vocabulary/english.txt"
 
@@ -43,3 +43,14 @@ for it_num in range(1, num_iterations + 1):
     log_info("Iteration %2d/%d: log_likelihood = %.4f" % (it_num, num_iterations, log_likelihood))
 
 log_info("Done training model.")
+
+# Print the alignments for the first ten sentences.
+i = 0
+for french_sentence, english_sentence in parallel_corpus:
+    print(model.align(french_sentence, english_sentence))
+    french_words = [vocab_french.get_word(fj) for fj in french_sentence]
+    english_words = [vocab_english.get_word(ei) for ei in english_sentence]
+    print(french_words, english_words)
+    i += 1
+    if i >= 10:
+        break
