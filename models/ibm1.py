@@ -2,6 +2,7 @@ import numpy as np
 
 
 # IBM translation model 1
+# note that in the model we operate on ids and NOT words!
 class IBM1():
     def __init__(self, french_vocab_size, english_vocab_size):
         # setup parameters
@@ -24,6 +25,15 @@ class IBM1():
                     self.counts_fr_and_eng[f_w, e_w] += self.prob_fr_given_eng[f_w, e_w]/(denom + self.eps)
         # M-step:
         self.prob_fr_given_eng = self.counts_fr_and_eng/(np.sum(self.counts_fr_and_eng, axis=1, keepdims=True) + self.eps)
+
+    # assuming that the task is to find the alignment and not to do the actual translation
+    def infer(self, french_sentence, english_sentence):
+        alignments = []
+        for f_w in french_sentence:
+            e_w = np.argmax([self.prob_fr_given_eng[f_w, e_w] for e_w in np.unique(english_sentence)])
+            indx = np.where(english_sentence == e_w)  # find it's position
+            alignments.append(indx)
+        return alignments
 
     def compute_log_likelihood(self, french_sentences, english_sentences):
         log_likelihood = 0

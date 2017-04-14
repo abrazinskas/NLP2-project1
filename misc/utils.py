@@ -20,6 +20,7 @@ def create_folders_if_not_exist(filename):
 # tokenizes corpora into clean tokens and converts them to ids based on vocabulary
 # returns an array[french_sentences, english_sentences]
 def tokenize_corpora_to_ids(vocab_french, vocab_english, french_file_path, english_file_path, word_preprocessor=None):
+    # TODO: add null word
     word_preprocessor = word_preprocessor if word_preprocessor else DEFAULT_WORD_PREPROCESSOR
     # read french data
     collector = []

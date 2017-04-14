@@ -17,7 +17,7 @@ def train_model(model, vocab_french, vocab_english, french_file_path, english_fi
     # train
     print 'starting training'
     print '----------'
-    for iter in range(iterations):
+    for iter in range(1, iterations+1):
         print "iteration nr %d" % iter
         model.train(french_sentences, english_sentences)
         log_likelihood = model.compute_log_likelihood(french_sentences, english_sentences)
