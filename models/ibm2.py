@@ -2,7 +2,7 @@ import numpy as np
 from models.ibm_base import IBM_Base
 
 
-# IBM translation model 1
+# IBM translation model 2
 class IBM2(IBM_Base):
     def __init__(self, french_vocab_size, english_vocab_size, training_type="em", max_jump=10):
         assert training_type in ["em", "var"]

@@ -9,8 +9,8 @@ from collections import OrderedDict
 
 
 # for training
-train_french_file_path = "data/training/all/hansards.36.2.f"
-train_english_file_path = "data/training/all/hansards.36.2.e"
+train_french_file_path = "data/training/small/hansards.36.2.f"
+train_english_file_path = "data/training/small/hansards.36.2.e"
 
 # for validation
 val_french_file_path = "data/validation/dev.f"
@@ -25,7 +25,7 @@ output_folder = os.path.join(output_folder, str(get_run_var(output_folder)))
 load_params_from_file = "output/0/params.pkl"
 
 # params
-max_vocab_size = 10000
+max_vocab_size = 2000
 iterations = 10
 load_params = False
 training_type = "var"

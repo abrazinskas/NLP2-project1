@@ -5,7 +5,7 @@ np.random.seed(1)
 
 # IBM translation model 1
 class IBM1(IBM_Base):
-    def __init__(self, french_vocab_size, english_vocab_size, training_type="em"):
+    def __init__(self, french_vocab_size, english_vocab_size, training_type="em", alpha=1.):
         assert training_type in ["em", "var"]
         self.training_type = training_type
         # setup parameters
@@ -16,7 +16,7 @@ class IBM1(IBM_Base):
         self.prob_fr_given_eng /= np.sum(self.prob_fr_given_eng, axis=0, keepdims=True)
         if training_type == "var":
             # Dirichlet's prior parameter (conj to categorical)
-            self.alpha = np.float32(np.random.uniform(low=0, high=1.0, size=[french_vocab_size, 1]))
+            self.alpha = np.full(alpha, french_vocab_size)
         self.params_to_save = []
         IBM_Base.__init__(self)
 
