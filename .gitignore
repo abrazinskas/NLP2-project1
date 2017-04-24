@@ -1,0 +1,8 @@
+*.pyc
+.DS_Store
+data/
+for_report/
+output/
+articles/
+.idea
+

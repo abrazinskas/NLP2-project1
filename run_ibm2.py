@@ -1,5 +1,5 @@
 # this is an example file that shows how to run IBM model 1
-from models.ibm1 import IBM1
+from models.ibm2 import IBM2
 from misc.support import train_model, word_to_special_token, word_preprocessor
 from misc.vocabulary import Vocabulary
 from misc.utils import get_run_var, format_experiments_info
@@ -25,10 +25,10 @@ output_folder = os.path.join(output_folder, str(get_run_var(output_folder)))
 load_params_from_file = "output/0/params.pkl"
 
 # params
-max_vocab_size = 10000
+max_vocab_size = 50000
 iterations = 10
 load_params = False
-training_type = "var"
+
 
 # create a log object
 log = Log(output_folder)
@@ -41,9 +41,8 @@ vocab_english = Vocabulary(train_english_file_path, vocab_file_path=english_voca
 
 # log parameters
 par = OrderedDict((
-    ('model', 'IBM1'), ('max_vocab_size', max_vocab_size), ('iterations', iterations), ('load_params', load_params),
-    ('train_french_file_path', train_french_file_path), ('train_eng_file_path', train_english_file_path),
-    ('training_type', training_type)
+    ('model', 'IBM2'), ('max_vocab_size', max_vocab_size), ('iterations', iterations), ('load_params', load_params),
+    ('train_french_file_path', train_french_file_path), ('train_eng_file_path', train_english_file_path)
     ))
 if load_params:
     par['params_file_path'] = load_params_from_file
@@ -54,7 +53,7 @@ log.write('english vocabulary size is: %d' % len(vocab_english))
 log.write_sep()
 
 print 'setting up the model'
-model = IBM1(french_vocab_size=len(vocab_french), english_vocab_size=len(vocab_english), training_type=training_type)
+model = IBM2(french_vocab_size=len(vocab_french), english_vocab_size=len(vocab_english))
 if load_params:
     model.load_parameters(load_params_from_file)
 print 'done'
