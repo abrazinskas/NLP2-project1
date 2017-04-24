@@ -69,4 +69,4 @@ class IBM1():
             posterior_probs = [alignment_prob * self.p_f_given_e[f_j, e_i] for e_i in english_sentence]
             posterior_probs /= (np.sum(posterior_probs) + self.epsilon)
             alignment[j] = np.argmax(posterior_probs)
-        return alignment
+        return zip(alignment, np.arange(len(alignment)) + 1)

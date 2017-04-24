@@ -43,7 +43,7 @@ class IBM2():
                     # Consider the case that f_j was generated from e_i. Add to the expected count of this event
                     # occurring, weighted by the posterior probability.
                     self.expected_lexical_counts[f_j, e_i] += posterior_probs[i]
-                    self.expected_jump_counts[self.jump_p_index(delta)] += posterior_probs[i]
+                    self.expected_jump_counts[self.jump_p_index(deltas[i])] += posterior_probs[i]
 
         # Perform the maximization (M) step to update the parameters.
         self.p_f_given_e = self.expected_lexical_counts / (np.sum(self.expected_lexical_counts, \
@@ -78,3 +78,21 @@ class IBM2():
     # Calculates the delta for a tuple (j, i, n, m).
     def delta(self, french_pos, eng_pos, french_len, eng_len):
         return int(eng_pos - np.floor(french_pos * (float(eng_len) / french_len)))
+
+    # Given a French and English sentence, return the Viterbi alignment, i.e. the alignment with the maximum
+    # posterior probability.
+    def align(self, french_sentence, english_sentence):
+        alignment = np.zeros(len(french_sentence), dtype=int)
+
+        # Note that we can pick the best alignment individually for each French word, since the individual alignments
+        # are assumed to be independent from each other in our model.
+        for j, f_j in enumerate(french_sentence):
+            posterior_probs = np.zeros(len(english_sentence))
+            for i, e_i in enumerate(english_sentence):
+                delta = self.delta(j, i, len(french_sentence), len(english_sentence))
+                alignment_prob = self.jump_prob(delta)
+                posterior_probs[i] = alignment_prob * self.p_f_given_e[f_j, e_i]
+            posterior_probs /= (np.sum(posterior_probs) + self.epsilon)
+            alignment[j] = np.argmax(posterior_probs)
+
+        return zip(alignment, np.arange(len(alignment)) + 1)
