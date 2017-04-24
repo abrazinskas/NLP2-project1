@@ -1,11 +1,10 @@
+from __future__ import division
 """
 This module helps you compute AER for validation set after each iteration of EM.
 Check the test function below for an example of how to use these helper functions.
 
 For test results, please use the official AER perl script.
 """
-
-import numpy as np
 
 def read_naacl_alignments(path):
     """
@@ -77,7 +76,7 @@ class AERSufficientStatistics:
 
     def aer(self):
         """Return alignment error rate: 1 - (|A & S| + |A & P|)/(|A| + |S|)"""
-        return 1 - np.float(self.a_and_s + self.a_and_p) / (self.a + self.s)
+        return 1 - (self.a_and_s + self.a_and_p) / (self.a + self.s)
 
 
 def test(path):
