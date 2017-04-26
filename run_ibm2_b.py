@@ -62,7 +62,11 @@ load_params(model, "params/ibm1.npy")
 predictions = []
 for french_sentence, english_sentence in parallel_validation_corpus:
     alignments = model.align(french_sentence, english_sentence)
-    predictions.append(set(alignments))
+
+    # Remove null alignments from predictions
+    filtered_alignments = [al for al in alignments if al[0] != 0]
+
+    predictions.append(set(filtered_alignments))
 aer = calculate_aer(predictions)
 val_log_likelihood = model.compute_log_likelihood(parallel_validation_corpus)
 log_likelihood = model.compute_log_likelihood(parallel_corpus)
@@ -78,7 +82,11 @@ for it_num in range(1, num_iterations + 1):
     predictions = []
     for french_sentence, english_sentence in parallel_validation_corpus:
         alignments = model.align(french_sentence, english_sentence)
-        predictions.append(set(alignments))
+
+        # Remove null alignments from predictions
+        filtered_alignments = [al for al in alignments if al[0] != 0]
+
+        predictions.append(set(filtered_alignments))
     aer = calculate_aer(predictions)
     val_log_likelihood = model.compute_log_likelihood(parallel_validation_corpus)
     log_likelihood = model.compute_log_likelihood(parallel_corpus)
