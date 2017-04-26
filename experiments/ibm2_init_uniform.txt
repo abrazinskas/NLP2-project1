@@ -1,0 +1,11 @@
+10:28:29 [INFO]: Setting up the model, French vocabulary size = 17625, English vocabulary size = 14405, max_jump = 100.
+10:28:29 [INFO]: Initializing parameters uniformly
+10:28:31 [INFO]: Model has been set up.
+10:40:01 [INFO]: Iteration  0/5: log_likelihood = -237.4685, val_log_likelihood = -236.3184, validation_AER = 1.0000
+10:40:01 [INFO]: Start training model.
+11:07:05 [INFO]: Iteration  1/5: log_likelihood = -109.0490, val_log_likelihood = -118.7844, validation_AER = 0.3176
+11:34:04 [INFO]: Iteration  2/5: log_likelihood = -84.1777, val_log_likelihood = -98.0551, validation_AER = 0.2893
+12:00:02 [INFO]: Iteration  3/5: log_likelihood = -74.9276, val_log_likelihood = -93.4415, validation_AER = 0.2724
+12:27:00 [INFO]: Iteration  4/5: log_likelihood = -72.1941, val_log_likelihood = -94.3295, validation_AER = 0.2677
+14:17:30 [INFO]: Iteration  5/5: log_likelihood = -71.3759, val_log_likelihood = -95.9597, validation_AER = 0.2630
+14:17:30 [INFO]: Done training model.
