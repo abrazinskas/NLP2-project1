@@ -1,5 +1,5 @@
 import numpy as np
-from models.ibm1_b import IBM1
+from models.variational_ibm1_b import VariationalIBM1
 from misc.vocabulary import Vocabulary
 from misc.utils import tokenize_corpora_to_ids
 from misc.support import log_info
@@ -28,9 +28,10 @@ def load_params(model, from_file):
 
 # Model hyperparameters
 num_iterations = 10
-max_vocab_size = None
+max_vocab_size = 500
 min_count = 5
-small_dataset = False
+small_dataset = True
+alpha = 1e-4
 
 # Data files.
 french_file_path = "data/training/small/hansards.36.2.f" if small_dataset else "data/training/hansards.36.2.f"
@@ -48,9 +49,9 @@ vocab_english = Vocabulary(english_file_path, vocab_file_path=english_vocab_path
         max_size=max_vocab_size)
 
 # Set up the model.
-log_info("Setting up the model, French vocabulary size = %d, English vocabulary size = %d." % \
-        (len(vocab_french), len(vocab_english)))
-model = IBM1(french_vocab_size=len(vocab_french), english_vocab_size=len(vocab_english))
+log_info("Setting up the model, French vocabulary size = %d, English vocabulary size = %d, alpha=%f." % \
+        (len(vocab_french), len(vocab_english), alpha))
+model = VariationalIBM1(french_vocab_size=len(vocab_french), english_vocab_size=len(vocab_english), alpha=alpha)
 log_info("Model has been set up.")
 
 # Tokenize the French and English sentences.
@@ -69,10 +70,10 @@ for french_sentence, english_sentence in parallel_validation_corpus:
 
     predictions.append(set(filtered_alignments))
 aer = calculate_aer(predictions)
-val_log_likelihood = model.compute_log_likelihood(parallel_validation_corpus)
-log_likelihood = model.compute_log_likelihood(parallel_corpus)
-log_info("Iteration %2d/%d: log_likelihood = %.4f, val_log_likelihood = %.4f, validation_AER = %.4f" % \
-        (0, num_iterations, log_likelihood, val_log_likelihood, aer))
+val_elbo = 0 #model.ELBO(parallel_validation_corpus)
+elbo = model.ELBO(parallel_corpus)
+log_info("Iteration %2d/%d: ELBO = %.4f, val_ELBO = %.4f, validation_AER = %.4f" % \
+        (0, num_iterations, elbo, val_elbo, aer))
 
 # Train the model for num_iterations EM steps.
 log_info("Start training model.")
@@ -83,17 +84,13 @@ for it_num in range(1, num_iterations + 1):
     predictions = []
     for french_sentence, english_sentence in parallel_validation_corpus:
         alignments = model.align(french_sentence, english_sentence)
-
-        # Remove null alignments from predictions
-        filtered_alignments = [al for al in alignments if al[0] != 0]
-
-        predictions.append(set(filtered_alignments))
+        predictions.append(set(alignments))
     aer = calculate_aer(predictions)
 
-    val_log_likelihood = model.compute_log_likelihood(parallel_validation_corpus)
-    log_likelihood = model.compute_log_likelihood(parallel_corpus)
-    log_info("Iteration %2d/%d: log_likelihood = %.4f, val_log_likelihood = %.4f, validation_AER = %.4f" % \
-            (it_num, num_iterations, log_likelihood, val_log_likelihood, aer))
+    val_elbo = 0 #model.ELBO(parallel_validation_corpus)
+    elbo = model.ELBO(parallel_corpus)
+    log_info("Iteration %2d/%d: ELBO = %.4f, val_ELBO = %.4f, validation_AER = %.4f" % \
+            (it_num, num_iterations, elbo, val_elbo, aer))
 # save_params(model, "params/final_params_ibm1_%d_it.npy" % num_iterations)
 
 log_info("Done training model.")

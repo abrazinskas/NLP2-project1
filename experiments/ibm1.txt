@@ -1,0 +1,15 @@
+20:37:36 [INFO]: Setting up the model, French vocabulary size = 17625, English vocabulary size = 14405.
+20:37:37 [INFO]: Model has been set up.
+20:40:14 [INFO]: Iteration  0/10: log_likelihood = -195.1554, val_log_likelihood = -191.0493, validation_AER = 1.0000
+20:40:14 [INFO]: Start training model.
+20:47:29 [INFO]: Iteration  1/10: log_likelihood = -100.1269, val_log_likelihood = -108.5174, validation_AER = 0.3781
+20:54:39 [INFO]: Iteration  2/10: log_likelihood = -87.3002, val_log_likelihood = -98.6847, validation_AER = 0.3495
+21:02:02 [INFO]: Iteration  3/10: log_likelihood = -83.4074, val_log_likelihood = -98.3403, validation_AER = 0.3381
+21:10:17 [INFO]: Iteration  4/10: log_likelihood = -82.0862, val_log_likelihood = -100.2241, validation_AER = 0.3375
+21:17:59 [INFO]: Iteration  5/10: log_likelihood = -81.4965, val_log_likelihood = -102.1615, validation_AER = 0.3391
+21:25:10 [INFO]: Iteration  6/10: log_likelihood = -81.1845, val_log_likelihood = -103.8797, validation_AER = 0.3388
+21:32:22 [INFO]: Iteration  7/10: log_likelihood = -81.0008, val_log_likelihood = -105.3088, validation_AER = 0.3407
+21:39:33 [INFO]: Iteration  8/10: log_likelihood = -80.8842, val_log_likelihood = -106.4822, validation_AER = 0.3378
+21:46:45 [INFO]: Iteration  9/10: log_likelihood = -80.8058, val_log_likelihood = -107.4531, validation_AER = 0.3346
+21:53:55 [INFO]: Iteration 10/10: log_likelihood = -80.7505, val_log_likelihood = -108.2705, validation_AER = 0.3314
+21:53:55 [INFO]: Done training model.

@@ -1,0 +1,12 @@
+07:14:36 [INFO]: Setting up the model, French vocabulary size = 17625, English vocabulary size = 14405, max_jump = 100.
+07:14:36 [INFO]: Initializing parameters randomly
+07:14:55 [INFO]: Model has been set up.
+07:14:55 [INFO]: Loading parallel corpus from data/training/hansards.36.2.f and data/training/hansards.36.2.e
+07:27:43 [INFO]: Iteration  0/5: log_likelihood = -246.2055, val_log_likelihood = -245.8530, validation_AER = 0.9485
+07:27:43 [INFO]: Start training model.
+07:52:52 [INFO]: Iteration  1/5: log_likelihood = -116.4578, val_log_likelihood = -127.3385, validation_AER = 0.6763
+08:17:55 [INFO]: Iteration  2/5: log_likelihood = -92.9020, val_log_likelihood = -106.5455, validation_AER = 0.4237
+08:42:57 [INFO]: Iteration  3/5: log_likelihood = -80.3164, val_log_likelihood = -97.8664, validation_AER = 0.3014
+09:07:55 [INFO]: Iteration  4/5: log_likelihood = -74.9606, val_log_likelihood = -95.9871, validation_AER = 0.2608
+09:32:53 [INFO]: Iteration  5/5: log_likelihood = -73.0373, val_log_likelihood = -96.7909, validation_AER = 0.2590
+09:32:53 [INFO]: Done training model.
