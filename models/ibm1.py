@@ -1,22 +1,26 @@
 import numpy as np
 from models.ibm_base import IBM_Base
 from scipy.special import digamma
-np.random.seed(1)
+
 
 # IBM translation model 1
 class IBM1(IBM_Base):
-    def __init__(self, french_vocab_size, english_vocab_size, training_type="em", alpha=1.):
+    def __init__(self, french_vocab_size, english_vocab_size, training_type="em", alpha=1e-3):
         assert training_type in ["em", "var"]
         self.training_type = training_type
+        self.french_vocab_size = french_vocab_size
+        self.english_vocab_size = english_vocab_size
+
         # setup parameters
         self.expected_counts_fr_and_eng = np.zeros(shape=[french_vocab_size, english_vocab_size], dtype="float32")
         # below collection of parameters is used both during E and M steps
+        # NOTICE THAT I'M SUING A
         self.prob_fr_given_eng = np.ones(shape=[french_vocab_size, english_vocab_size], dtype="float32")
         # normalization
         self.prob_fr_given_eng /= np.sum(self.prob_fr_given_eng, axis=0, keepdims=True)
         if training_type == "var":
             # Dirichlet's prior parameter (conj to categorical)
-            self.alpha = np.full(alpha, french_vocab_size)
+            self.alpha = alpha
         self.params_to_save = []
         IBM_Base.__init__(self)
 
@@ -49,14 +53,6 @@ class IBM1(IBM_Base):
                     for j, e_w in enumerate(e_sent):
                         self.expected_counts_fr_and_eng[f_w, e_w] += posteriors[j]
             # M-step:
-            # 1. compute lambdas
             lambdas = self.expected_counts_fr_and_eng + self.alpha
-            for f_sent, e_sent in parallel_corpus:
-                # 2. compute theta parameters(categorical)
-                a = digamma(lambdas[np.ix_(f_sent, e_sent)])
-                # TODO: do something smart to avoid summing over all french words
-                b = digamma(np.sum(lambdas[:, e_sent], axis=0, keepdims=True))
-                self.prob_fr_given_eng[np.ix_(f_sent, e_sent)] = np.exp(a - b)
-
-
-
+            self.prob_fr_given_eng = np.exp(digamma(lambdas + self.eps)
+                                            - digamma(np.sum(lambdas, axis=0, keepdims=True) + self.eps))

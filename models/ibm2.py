@@ -5,25 +5,17 @@ from models.ibm_base import IBM_Base
 # IBM translation model 2
 class IBM2(IBM_Base):
     def __init__(self, french_vocab_size, english_vocab_size, training_type="em", max_jump=10):
-        assert training_type in ["em", "var"]
+        assert training_type in ["em"]
         self.training_type = training_type
         self.num_allowed_jumps = 2 * max_jump + 1
         self.max_jump = max_jump
+
         # setup parameters
         self.expected_counts_fr_and_eng = np.zeros(shape=[french_vocab_size, english_vocab_size], dtype="float32")
         self.expected_jump_counts = np.zeros(self.num_allowed_jumps)
-
         self.prob_fr_given_eng = np.ones(shape=[french_vocab_size, english_vocab_size], dtype="float32")
         self.prob_fr_given_eng /= np.sum(self.prob_fr_given_eng, axis=0, keepdims=True)  # normalization
-
         self.jump_p = np.full(self.num_allowed_jumps, 1.0 / self.num_allowed_jumps)
-
-        if training_type == "var":
-            # prior parameter
-            # temporary parameter that is used in q(a|\phi) computation
-            self.lambd = np.float32(np.random.uniform(low=0, high=1.0, size=[french_vocab_size, english_vocab_size]))
-            # Dirichlet's prior parameter (conj to categorical)
-            self.alpha = np.float32(np.random.uniform(low=0, high=1.0, size=[french_vocab_size]))
 
         self.params_to_save = []
         IBM_Base.__init__(self)

@@ -61,6 +61,7 @@ def tokenize_corpora_to_ids(vocab_french, vocab_english, french_file_path, engli
 
                 yield (french_token_ids, english_token_ids)
 
+
 # removes/replaces strange symbols like é
 def deal_with_accents(str):
     return unicodedata.normalize('NFD', str).encode('ascii', 'ignore')
@@ -72,9 +73,11 @@ def get_run_var(dir):
     subdirectories = get_immediate_subdirectories(dir)
     return len(subdirectories)
 
+
 def get_immediate_subdirectories(a_dir):
     return [name for name in os.listdir(a_dir)
             if os.path.isdir(os.path.join(a_dir, name))]
+
 
 def format_experiments_info(params):
     st = ""

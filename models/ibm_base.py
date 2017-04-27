@@ -1,6 +1,7 @@
 import numpy as np
-import scipy, os, pickle
+import os, pickle
 from pickle import UnpicklingError
+from scipy.special import digamma, gammaln
 
 
 # a parent class for IBM models
@@ -8,7 +9,14 @@ class IBM_Base():
     def __init__(self):
         self.eps = 1e-6
 
-    def compute_log_likelihood(self, parallel_corpus):
+    # a general function that either invoke ELBO or log-likelihood
+    def compute_objective(self, parallel_corpus):
+        if self.training_type == "em":
+            return self.__compute_log_likelihood(parallel_corpus)
+        else:
+            return self.__compute_elbo(parallel_corpus)
+
+    def __compute_log_likelihood(self, parallel_corpus):
         log_likelihood = 0.
         nr_of_sent = 0
         for f_sent, e_sent in parallel_corpus:
@@ -20,9 +28,37 @@ class IBM_Base():
                 log_likelihood += np.log(temp_ll + self.eps)
         return log_likelihood / nr_of_sent
 
+    # compute the lower-bound of the log-likelihood
+    # should currently work ONLY FOR IBM1, I DON'T KNOW YET WHAT CHANGES SHOULD BE MADE TO MAKE IT WORK FOR IBM2
+    # I use indices in comments as in my notes
+    def __compute_elbo(self, parallel_corpus):
+        elbo = 0.
+        nr_of_sent = 0
+        lambdas = self.expected_counts_fr_and_eng + self.alpha
+        # First part
+        for f_sent, e_sent in parallel_corpus:
+            nr_of_sent += 1
+            for i, f_w in enumerate(f_sent):
+                posteriors = [self.prob_fr_given_eng[f_w, e_w] for e_w in e_sent] # q(a|\phi)
+                posteriors /= (np.sum(posteriors) + self.eps)
+                for j, e_w in enumerate(e_sent):
+                    # 1. and 3. combined
+                    elbo += posteriors[j] * np.log(self.prob_a(j, i, len(e_sent), len(f_sent))/(posteriors[j] + self.eps))
+                    # 2.
+                    expect = np.log(self.prob_fr_given_eng[f_w, e_w] + self.eps)
+                    elbo += posteriors[j] * expect
+
+        # Second part (one involving priors over theta)
+        expect = np.log(self.prob_fr_given_eng + self.eps)
+        inner_loop = expect * (self.alpha - lambdas) + gammaln(lambdas + self.eps) - gammaln(self.alpha + self.eps)
+        outer_loop = self.gammaln(self.french_vocab_size * self.alpha + self.eps) \
+                     - gammaln(np.sum(lambdas, axis=0) + self.eps)
+        minus_kl = np.sum(inner_loop) + np.sum(outer_loop)
+        return elbo/nr_of_sent + minus_kl
+
     def train(self, parallel_corpus):
         if self.training_type == "em":
-            self.train_EM(parallel_corpus)
+            self.train_em(parallel_corpus)
         else:
             self.train_var(parallel_corpus)
 

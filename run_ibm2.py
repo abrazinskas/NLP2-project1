@@ -61,7 +61,7 @@ print '----------'
 
 
 train_model(model, vocab_french=vocab_french, vocab_english=vocab_english, word_preprocessor=word_to_special_token,
-            iterations=iterations, log=log, alignment_path=align_file_path,
+            iterations=iterations, log=log, valid_alignment_file_path=align_file_path,
             train_french_file_path=train_french_file_path, train_english_file_path=train_english_file_path,
             valid_french_file_path=val_french_file_path, valid_english_file_path=val_english_file_path,
           )

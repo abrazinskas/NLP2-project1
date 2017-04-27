@@ -1,14 +1,17 @@
 from utils import tokenize_corpora_to_ids
 import special_symbols
 from time import gmtime, strftime, time
-import re
+import re, os
 from aer import AERSufficientStatistics, read_naacl_alignments
 
 
 # a support function for training models
-# TODO: make log presence requirements non-mandatory
+# TODO: make the log presence requirement non-mandatory
 def train_model(model, vocab_french, vocab_english, train_french_file_path, train_english_file_path,
-                valid_french_file_path, valid_english_file_path, alignment_path, log, iterations=10, word_preprocessor=None):
+                valid_french_file_path, valid_english_file_path, valid_alignment_file_path,
+                test_french_file_path, test_english_file_path, test_alignment_file_path,
+                log, iterations=10, word_preprocessor=None, predictions_path=None, include_train_ll=False,
+                include_test_aer=False):
     parallel_corpus_train = tokenize_corpora_to_ids(vocab_french, vocab_english,
                                           french_file_path=train_french_file_path,
                                           english_file_path=train_english_file_path,
@@ -17,51 +20,64 @@ def train_model(model, vocab_french, vocab_english, train_french_file_path, trai
                                           french_file_path=valid_french_file_path,
                                           english_file_path=valid_english_file_path,
                                           word_preprocessor=word_preprocessor)
-    log_likelihood = model.compute_log_likelihood(parallel_corpus_valid)
-    aer = evaluate_model(model, parallel_corpus=parallel_corpus_valid, alignment_path=alignment_path)
-
-    log.write('initial valid. log-likelihood is: %.2f' % log_likelihood)
-    log.write('initial valid. AER is: %f' % aer)
-    print 'starting training'
-    print '----------'
+    parallel_corpus_test = tokenize_corpora_to_ids(vocab_french, vocab_english,
+                                          french_file_path=test_french_file_path,
+                                          english_file_path=test_english_file_path,
+                                          word_preprocessor=word_preprocessor)
+    # valid_log_likelihood = model.compute_objective(parallel_corpus_valid)
+    # valid_aer = evaluate_model(model, parallel_corpus=parallel_corpus_valid, alignment_path=valid_alignment_file_path)
+    # if include_train_ll:
+    #     train_obj = model.compute_objective(parallel_corpus_train)
+    #     log.write('initial train. objective is: %.2f' % train_obj)
+    # # log.write('initial valid. objective is: %.2f' % valid_log_likelihood)
+    # log.write('initial valid. AER is: %f' % valid_aer)
     start = time()
     for it in range(1, iterations+1):
-        log.write("iteration nr %d" % it)
+        log.write("iteration nr. %d" % it)
         model.train(parallel_corpus_train)
-        log_likelihood = model.compute_log_likelihood(parallel_corpus_valid)
-        aer = evaluate_model(model, parallel_corpus=parallel_corpus_valid, alignment_path=alignment_path)
-        log.write("valid. log-likelihood is: %.2f" % log_likelihood)
-        log.write("valid. AER is: %f" % aer)
-        log.write_sep()
+        # check the iteration is the last one, and if so pass a write file to collect predictions.
+        valid_aer = evaluate_model(model, parallel_corpus=parallel_corpus_valid, alignment_path=valid_alignment_file_path)
+        if include_train_ll:
+            train_obj = model.compute_objective(parallel_corpus_train)
+            log.write('train. objective is: %.2f' % train_obj)
+        log.write("valid. AER is: %f" % valid_aer)
+        if include_test_aer:
+            test_aer = evaluate_model(model, parallel_corpus=parallel_corpus_test, alignment_path=test_alignment_file_path,
+            predictions_file_path=os.path.join(predictions_path, ".".join(["test", str(it), "naacl"])))
+            log.write("test AER is: %f" % test_aer)
+        valid_log_likelihood = model.compute_objective(parallel_corpus_valid)
+        log.write('valid. objective is: %.2f' % valid_log_likelihood)
+
     end = time()
     log.write("training took %f minutes " % ((end - start)/60.0))
 
 
-# a support function for models evaluation
-def evaluate_model(model, alignment_path, parallel_corpus):
+# a support function for models evaluation, writes predictions in the naacl format if write_file_path is provided
+def evaluate_model(model, alignment_path, parallel_corpus, predictions_file_path=None):
 
     # 1. Read in gold alignments
     gold_sets = read_naacl_alignments(alignment_path)
 
     # 2. Here I have the predictions of my own algorithm
     predictions = []
-
+    sentence_number = 0
+    if predictions_file_path:
+        write_file = open(predictions_file_path, 'w')
     for (french_sentence, english_sentence), (s, _) in zip(parallel_corpus, gold_sets):
+        sentence_number += 1
         alignment = model.infer_alignment(french_sentence, english_sentence)
-        # print french_sentence
-        # print english_sentence
-        # print s
-        # print alignment
         temp_pred = []
         for i, a in enumerate(alignment):
+            # skip null-token alignments
+            if a == 0:
+                continue
             temp_pred.append((a, i+1))
-        # for e_w_indx, f_w_indx in s:
-        #     temp_pred.append((alignment[f_w_indx-1], f_w_indx))
+            if predictions_file_path:
+                write_file.write(" ".join([str(sentence_number), str(a), str(i+1), "P"])+"\n")
         predictions.append(set(temp_pred))
-        # print temp_pred
-        # print ' --------- '
 
-
+    if predictions_file_path:
+        write_file.close()
     # 3. Compute AER
 
     # first we get an object that manages sufficient statistics
