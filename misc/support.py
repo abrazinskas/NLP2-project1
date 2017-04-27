@@ -73,7 +73,7 @@ def evaluate_model(model, alignment_path, parallel_corpus, predictions_file_path
                 continue
             temp_pred.append((a, i+1))
             if predictions_file_path:
-                write_file.write(" ".join([str(sentence_number), str(a), str(i+1), "P"])+"\n")
+                write_file.write("%04d %d %d %s\n" % (sentence_number, a, i+1, "P"))
         predictions.append(set(temp_pred))
 
     if predictions_file_path:
