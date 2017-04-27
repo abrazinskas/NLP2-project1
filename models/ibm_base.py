@@ -29,7 +29,6 @@ class IBM_Base():
         return log_likelihood / nr_of_sent
 
     # compute the lower-bound of the log-likelihood
-    # should currently work ONLY FOR IBM1, I DON'T KNOW YET WHAT CHANGES SHOULD BE MADE TO MAKE IT WORK FOR IBM2
     # I use indices in comments as in my notes
     def __compute_elbo(self, parallel_corpus):
         elbo = 0.
@@ -51,7 +50,7 @@ class IBM_Base():
         # Second part (one involving priors over theta)
         expect = np.log(self.prob_fr_given_eng + self.eps)
         inner_loop = expect * (self.alpha - lambdas) + gammaln(lambdas + self.eps) - gammaln(self.alpha + self.eps)
-        outer_loop = self.gammaln(self.french_vocab_size * self.alpha + self.eps) \
+        outer_loop = gammaln(self.french_vocab_size * self.alpha + self.eps) \
                      - gammaln(np.sum(lambdas, axis=0) + self.eps)
         minus_kl = np.sum(inner_loop) + np.sum(outer_loop)
         return elbo/nr_of_sent + minus_kl
