@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.special import digamma
+from scipy.special import digamma, gammaln
 
 class VariationalIBM1():
 
@@ -8,10 +8,10 @@ class VariationalIBM1():
 
         # Initialize parameters uniformly. We have no prior knowledge. Note that these parameters
         # are not random and therefore EM will run deterministically.
-        self.p_f_given_e = np.full((french_vocab_size, english_vocab_size), 1.0 / french_vocab_size)
+        self.theta_f_given_e = np.full((french_vocab_size, english_vocab_size), 1.0 / french_vocab_size)
 
-        self.epsilon = 1e-6
         self.alpha = alpha
+        self.epsilon = 1e-6
 
     # Performs a single E and M step over the entire given dataset.
     def train(self, parallel_corpus):
@@ -19,7 +19,6 @@ class VariationalIBM1():
         # Make sure the expected counts matrix contains zeros.
         self.expected_counts.fill(0.)
 
-        # Perform the expectation (E) step using the current parameters.
         for (french_sentence, english_sentence) in parallel_corpus:
 
             # The alignment probability for IBM1 is uniform. The NULL token has already been added to the English
@@ -29,7 +28,7 @@ class VariationalIBM1():
             for f_j in french_sentence:
 
                 # Compute the posterior probabilities for each possible alignment for this french word.
-                posterior_probs = [alignment_prob * self.p_f_given_e[f_j, e_i] for e_i in english_sentence]
+                posterior_probs = [alignment_prob * self.theta_f_given_e[f_j, e_i] for e_i in english_sentence]
                 posterior_probs /= (np.sum(posterior_probs) + self.epsilon)
 
                 for i, e_i in enumerate(english_sentence):
@@ -38,29 +37,32 @@ class VariationalIBM1():
                     # occurring, weighted by the posterior probability.
                     self.expected_counts[f_j, e_i] += posterior_probs[i]
 
-        # Add alpha to the probabilities (?)
-        self.p_f_given_e += self.alpha
+        lambda_f_given_e = self.expected_counts + self.alpha
+        self.theta_f_given_e = np.exp(digamma(lambda_f_given_e + self.epsilon) - \
+                digamma(np.sum(lambda_f_given_e, axis=0, keepdims=True) + self.epsilon))
 
-        # Perform the maximization (M) step to update the parameters.
-        self.p_f_given_e = np.exp(digamma(self.expected_counts + self.epsilon) - digamma(np.sum(self.expected_counts, axis=0, keepdims=True) + self.epsilon))
+    def ELBO(self, parallel_corpus):
+        ELBO = 0.
+        lambda_f_given_e = self.expected_counts + self.alpha
 
-    # Computes the marginal log likelihood.
-    def compute_log_likelihood(self, parallel_corpus):
-        ll = 0.
-        num_data_points = 0
+        # Dep on parallel corpus
         for (french_sentence, english_sentence) in parallel_corpus:
-            num_data_points += 1
+            for e_i in english_sentence:
+                for f_j in french_sentence:
+                    ELBO += np.log(self.theta_f_given_e[f_j, e_i] + self.epsilon)
 
-            # Alignment probability is uniform for each alignment.
-            p_alignment = 1. / len(english_sentence)
-
-            for f_j in french_sentence:
-                inner_sum = 0.
-                for e_i in english_sentence:
-                    inner_sum += p_alignment * self.p_f_given_e[f_j, e_i]
-                ll += np.log(inner_sum + 1e-10)
-
-        return ll / num_data_points
+        # Indep of parallel corpus
+        for e in range(self.theta_f_given_e.shape[1]):
+            for f in range(self.theta_f_given_e.shape[0]):
+                sum_lambda = 0.
+                for f_j in french_sentence:
+                    ELBO += np.log(self.theta_f_given_e[f, e] + self.epsilon) * (self.alpha - lambda_f_given_e[f, e])
+                    ELBO += gammaln(lambda_f_given_e[f, e] + self.epsilon)
+                    ELBO -= gammaln(self.alpha + self.epsilon)
+                    sum_lambda += lambda_f_given_e[f, e]
+                ELBO -= gammaln(sum_lambda + self.epsilon)
+            ELBO += gammaln(self.alpha * self.theta_f_given_e.shape[0] + self.epsilon)
+        return ELBO
 
     # Given a French and English sentence, return the Viterbi alignment, i.e. the alignment with the maximum
     # posterior probability.
@@ -71,7 +73,7 @@ class VariationalIBM1():
         # Note that we can pick the best alignment individually for each French word, since the individual alignments
         # are assumed to be independent from each other in our model.
         for j, f_j in enumerate(french_sentence):
-            posterior_probs = [alignment_prob * self.p_f_given_e[f_j, e_i] for e_i in english_sentence]
+            posterior_probs = [alignment_prob * self.theta_f_given_e[f_j, e_i] for e_i in english_sentence]
             posterior_probs /= (np.sum(posterior_probs) + self.epsilon)
             alignment[j] = np.argmax(posterior_probs)
         return zip(alignment, np.arange(len(alignment)) + 1)

@@ -8,7 +8,7 @@ def log_info(log_string):
 
 class IBM2():
 
-    def __init__(self, french_vocab_size, english_vocab_size, max_jump=10):
+    def __init__(self, french_vocab_size, english_vocab_size, max_jump=10, init="uniform"):
         self.num_allowed_jumps = 2 * max_jump + 1
         self.expected_lexical_counts = np.zeros((french_vocab_size, english_vocab_size))
         self.expected_jump_counts = np.zeros(self.num_allowed_jumps)
@@ -16,19 +16,26 @@ class IBM2():
 
         # Initialize parameters uniformly. We have no prior knowledge. Note that these parameters
         # are not random and therefore EM will run deterministically.
-        self.p_f_given_e = np.full((french_vocab_size, english_vocab_size), 1.0 / french_vocab_size)
-        self.jump_p = np.full(self.num_allowed_jumps, 1.0 / (self.num_allowed_jumps + 1.))
-        self.null_jump_p = 1.0 / (self.num_allowed_jumps + 1.)
-
-        # log_info("Initializing parameters randomly")
-        # self.p_f_given_e = np.exp(np.random.normal(loc=0., scale=1., size=(french_vocab_size, english_vocab_size)))
-        # self.p_f_given_e = self.p_f_given_e / (np.sum(self.p_f_given_e, \
-        #         axis=0, keepdims=True))
-        # self.jump_p = np.exp(np.random.normal(loc=0., scale=1., size=self.num_allowed_jumps))
-        # self.null_jump_p = np.exp(np.random.normal(loc=0., scale=1., size=1))
-        # Z = np.sum(self.jump_p) + self.null_jump
-        # self.jump_p /= Z
-        # self.null_jump /= Z
+        if init == "uniform":
+            log_info("Initializing parameters uniformly")
+            self.p_f_given_e = np.full((french_vocab_size, english_vocab_size), 1.0 / french_vocab_size)
+            self.jump_p = np.full(self.num_allowed_jumps, 1.0 / (self.num_allowed_jumps + 1.))
+            self.null_jump_p = 1.0 / (self.num_allowed_jumps + 1.)
+        elif init == "random":
+            log_info("Initializing parameters randomly")
+            self.p_f_given_e = np.exp(np.random.normal(loc=0., scale=1., size=(french_vocab_size, english_vocab_size)))
+            self.p_f_given_e = self.p_f_given_e / (np.sum(self.p_f_given_e, \
+                    axis=0, keepdims=True))
+            self.jump_p = np.exp(np.random.normal(loc=0., scale=1., size=self.num_allowed_jumps))
+            self.null_jump_p = np.exp(np.random.normal(loc=0., scale=1., size=1))
+            Z = np.sum(self.jump_p) + self.null_jump_p
+            self.jump_p /= Z
+            self.null_jump_p /= Z
+        elif init == "ibm1":
+            self.jump_p = np.full(self.num_allowed_jumps, 1.0 / (self.num_allowed_jumps + 1.))
+            self.null_jump_p = 1.0 / (self.num_allowed_jumps + 1.)
+        else:
+            log_info("Unknown initialization method.")
 
         self.max_jump = max_jump
         self.epsilon = 1e-6

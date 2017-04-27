@@ -27,10 +27,10 @@ def load_params(model, from_file):
     model.p_f_given_e = params
 
 # Model hyperparameters
-num_iterations = 0
+num_iterations = 10
 max_vocab_size = None
 min_count = 5
-small_dataset = True
+small_dataset = False
 
 # Data files.
 french_file_path = "data/training/small/hansards.36.2.f" if small_dataset else "data/training/hansards.36.2.f"
@@ -59,9 +59,6 @@ parallel_corpus = tokenize_corpora_to_ids(vocab_french, vocab_english, \
 parallel_validation_corpus = tokenize_corpora_to_ids(vocab_french, vocab_english, \
         french_file_path=french_validation_file_path, english_file_path=english_validation_file_path)
 
-# Report the likelihood before training.
-load_params(model, "params/ibm1.npy")
-
 # Calculate the validation AER and log likelihood for the initial parameters.
 predictions = []
 for french_sentence, english_sentence in parallel_validation_corpus:
@@ -86,7 +83,11 @@ for it_num in range(1, num_iterations + 1):
     predictions = []
     for french_sentence, english_sentence in parallel_validation_corpus:
         alignments = model.align(french_sentence, english_sentence)
-        predictions.append(set(alignments))
+
+        # Remove null alignments from predictions
+        filtered_alignments = [al for al in alignments if al[0] != 0]
+
+        predictions.append(set(filtered_alignments))
     aer = calculate_aer(predictions)
 
     val_log_likelihood = model.compute_log_likelihood(parallel_validation_corpus)

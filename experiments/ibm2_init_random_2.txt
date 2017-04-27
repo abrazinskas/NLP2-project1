@@ -1,12 +1,12 @@
-21:43:32 [INFO]: Setting up the model, French vocabulary size = 17625, English vocabulary size = 14405, max_jump = 100.
-21:43:32 [INFO]: Initializing parameters randomly
-21:43:48 [INFO]: Model has been set up.
-21:43:48 [INFO]: Loading parallel corpus from data/training/hansards.36.2.f and data/training/hansards.36.2.e
-21:54:53 [INFO]: Iteration  0/5: log_likelihood = -244.7641, val_log_likelihood = -243.4773, validation_AER = 0.8520
-21:54:53 [INFO]: Start training model.
-22:20:41 [INFO]: Iteration  1/5: log_likelihood = -107.3381, val_log_likelihood = -119.4815, validation_AER = 0.5259
-22:46:48 [INFO]: Iteration  2/5: log_likelihood = -84.4483, val_log_likelihood = -100.5753, validation_AER = 0.3864
-23:12:54 [INFO]: Iteration  3/5: log_likelihood = -75.9919, val_log_likelihood = -95.5073, validation_AER = 0.3289
-23:38:55 [INFO]: Iteration  4/5: log_likelihood = -73.1311, val_log_likelihood = -95.1559, validation_AER = 0.3091
-00:05:06 [INFO]: Iteration  5/5: log_likelihood = -72.0120, val_log_likelihood = -95.9630, validation_AER = 0.2922
-00:05:06 [INFO]: Done training model.
+04:49:31 [INFO]: Setting up the model, French vocabulary size = 17625, English vocabulary size = 14405, max_jump = 100.
+04:49:31 [INFO]: Initializing parameters randomly
+04:49:50 [INFO]: Model has been set up.
+04:49:50 [INFO]: Loading parallel corpus from data/training/hansards.36.2.f and data/training/hansards.36.2.e
+05:02:59 [INFO]: Iteration  0/5: log_likelihood = -239.3501, val_log_likelihood = -238.3262, validation_AER = 0.9026
+05:02:59 [INFO]: Start training model.
+05:29:20 [INFO]: Iteration  1/5: log_likelihood = -111.9621, val_log_likelihood = -123.0185, validation_AER = 0.5445
+05:55:38 [INFO]: Iteration  2/5: log_likelihood = -87.5498, val_log_likelihood = -102.7445, validation_AER = 0.3594
+06:22:05 [INFO]: Iteration  3/5: log_likelihood = -77.1103, val_log_likelihood = -96.3051, validation_AER = 0.2970
+06:48:20 [INFO]: Iteration  4/5: log_likelihood = -73.7048, val_log_likelihood = -95.9465, validation_AER = 0.2696
+07:14:34 [INFO]: Iteration  5/5: log_likelihood = -72.4886, val_log_likelihood = -96.8207, validation_AER = 0.2637
+07:14:34 [INFO]: Done training model.

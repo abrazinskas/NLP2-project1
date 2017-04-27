@@ -4,6 +4,7 @@ from misc.utils import tokenize_corpora_to_ids
 from misc.support import log_info
 from aer import read_naacl_alignments, AERSufficientStatistics
 import numpy as np
+import argparse
 
 def load_params(model, from_file):
     log_info("Loading parameters from %s" % from_file)
@@ -21,12 +22,17 @@ def calculate_aer(predictions):
         metric.update(sure=gold[0], probable=gold[1], predicted=pred)
     return metric.aer()
 
+# Parse arguments
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--init', default="random")
+args = parser.parse_args()
+
 # Model hyperparameters
-num_iterations = 3
+num_iterations = 5
 max_jump = 100
-max_vocab_size = 10000
+max_vocab_size = None
 min_count = 5
-small_dataset = True
+small_dataset = False
 
 # Data files.
 french_file_path = "data/training/small/hansards.36.2.f" if small_dataset else "data/training/hansards.36.2.f"
@@ -45,7 +51,8 @@ vocab_english = Vocabulary(english_file_path, vocab_file_path=english_vocab_path
 # Set up the model.
 log_info("Setting up the model, French vocabulary size = %d, English vocabulary size = %d, max_jump = %d." % \
         (len(vocab_french), len(vocab_english), max_jump))
-model = IBM2(french_vocab_size=len(vocab_french), english_vocab_size=len(vocab_english), max_jump=max_jump)
+model = IBM2(french_vocab_size=len(vocab_french), english_vocab_size=len(vocab_english), max_jump=max_jump, \
+        init=args.init)
 log_info("Model has been set up.")
 
 # Tokenize the French and English sentences.
@@ -56,7 +63,8 @@ parallel_validation_corpus = tokenize_corpora_to_ids(vocab_french, vocab_english
         french_file_path=french_validation_file_path, english_file_path=english_validation_file_path)
 
 # Load IBM1 parameters
-load_params(model, "params/ibm1.npy")
+if args.init == "ibm1":
+    load_params(model, "params/ibm1.npy")
 
 # Report the likelihood before training.
 predictions = []
