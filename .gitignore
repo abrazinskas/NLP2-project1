@@ -5,4 +5,5 @@ for_report/
 output/
 articles/
 .idea
-
+params
+run_experiments.sh
