@@ -97,7 +97,7 @@ plot_aer(ibm1_long_aer, "IBM 1 validation AER for 20 iterations", "ibm1_long_aer
 
 # Plot IBM 2 results
 plot_ll(ibm2_long_ll, "IBM 2 log-likelihood uniformly initialized for 20 iterations", "ibm2_long_ll.eps")
-plot_aer(ibm2_long_aer, "IBM 2 validation AER uniformly initialized for 20 iterations", "ibm2_long_ll.eps")
+plot_aer(ibm2_long_aer, "IBM 2 validation AER uniformly initialized for 20 iterations", "ibm2_long_aer.eps")
 plot_lls(ibm2_lls, ibm2_labels, "IBM 2 log-likelihood for different types of initialization", "ibm2_compare_lls.eps")
 plot_lls(ibm2_lls, ibm2_labels, "IBM 2 log-likelihood for different types of initialization", "ibm2_compare_lls_tail.eps", plot_tail=3)
 plot_aers(ibm2_aers, ibm2_labels, "IBM 2 AERs for different types of initialization", "ibm2_compare_aers.eps")
