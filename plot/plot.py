@@ -1,12 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import itertools
 
 def plot_lls(lls, labels, title, save_to, plot_tail=None):
     plt.clf()
     iterations = np.arange(len(lls[0]))
     lls = np.array(lls)
+    marker = itertools.cycle(('o', 'p', 'v', 's', '8', '>', '^', '<', 'x'))
     for i, ll in enumerate(lls):
-        plt.plot(iterations, ll, '-o', label=labels[i])
+        plt.plot(iterations, ll, '-o', label=labels[i], marker=marker.next())
     plt.xticks(iterations)
     plt.xlabel("Iterations")
     plt.ylabel("Log-likelihood")
@@ -32,9 +34,10 @@ def plot_ll(ll, title, save_to):
 def plot_aers(aers, labels, title, save_to, plot_tail=None):
     plt.clf()
     iterations = np.arange(len(aers[0]))
+    marker = itertools.cycle(('o', 'p', 'v', 's', '8', '>', '^', '<', 'x'))
     aers = np.array(aers)
     for i, aer in enumerate(aers):
-        plt.plot(iterations, aer, '-o', label=labels[i])
+        plt.plot(iterations, aer, '-o', label=labels[i], marker=marker.next())
     plt.xticks(iterations)
     plt.xlabel("Iterations")
     plt.ylabel("AER")
