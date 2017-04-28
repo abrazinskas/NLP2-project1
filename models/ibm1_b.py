@@ -59,7 +59,7 @@ class IBM1():
 
     # Given a French and English sentence, return the Viterbi alignment, i.e. the alignment with the maximum
     # posterior probability.
-    def align(self, french_sentence, english_sentence):
+    def infer_alignment(self, french_sentence, english_sentence):
         alignment = np.zeros(len(french_sentence), dtype=int)
         alignment_prob = 1. / len(english_sentence)
 
@@ -69,4 +69,4 @@ class IBM1():
             posterior_probs = [alignment_prob * self.p_f_given_e[f_j, e_i] for e_i in english_sentence]
             posterior_probs /= (np.sum(posterior_probs) + self.epsilon)
             alignment[j] = np.argmax(posterior_probs)
-        return zip(alignment, np.arange(len(alignment)) + 1)
+        return alignment

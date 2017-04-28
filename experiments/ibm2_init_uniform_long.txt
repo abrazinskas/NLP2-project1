@@ -1,0 +1,27 @@
+22:04:33 [INFO]: Setting up the model, French vocabulary size = 17625, English vocabulary size = 14405, max_jump = 100.
+22:04:33 [INFO]: Initializing parameters uniformly
+22:04:34 [INFO]: Model has been set up.
+22:04:34 [INFO]: Loading parallel corpus from data/training/hansards.36.2.f and data/training/hansards.36.2.e
+22:16:01 [INFO]: Iteration  0/20: log_likelihood = -237.5674, val_log_likelihood = -236.4154, validation_AER = 1.0000, testing_AER = 1.0000
+22:16:01 [INFO]: Start training model.
+22:42:08 [INFO]: Iteration  1/20: log_likelihood = -109.4525, val_log_likelihood = -119.0555, validation_AER = 0.3301, testing_AER = 0.3256
+23:08:29 [INFO]: Iteration  2/20: log_likelihood = -84.6752, val_log_likelihood = -98.4643, validation_AER = 0.2762, testing_AER = 0.2607
+23:34:53 [INFO]: Iteration  3/20: log_likelihood = -75.4823, val_log_likelihood = -93.9857, validation_AER = 0.2620, testing_AER = 0.2490
+00:01:14 [INFO]: Iteration  4/20: log_likelihood = -72.7437, val_log_likelihood = -94.9740, validation_AER = 0.2573, testing_AER = 0.2430
+00:27:31 [INFO]: Iteration  5/20: log_likelihood = -71.9122, val_log_likelihood = -96.6182, validation_AER = 0.2472, testing_AER = 0.2407
+00:53:53 [INFO]: Iteration  6/20: log_likelihood = -71.5774, val_log_likelihood = -98.0706, validation_AER = 0.2462, testing_AER = 0.2402
+01:20:27 [INFO]: Iteration  7/20: log_likelihood = -71.4072, val_log_likelihood = -99.1152, validation_AER = 0.2453, testing_AER = 0.2403
+01:46:53 [INFO]: Iteration  8/20: log_likelihood = -71.3103, val_log_likelihood = -99.9030, validation_AER = 0.2443, testing_AER = 0.2395
+02:13:22 [INFO]: Iteration  9/20: log_likelihood = -71.2503, val_log_likelihood = -100.4778, validation_AER = 0.2465, testing_AER = 0.2384
+02:39:44 [INFO]: Iteration 10/20: log_likelihood = -71.2104, val_log_likelihood = -100.9127, validation_AER = 0.2462, testing_AER = 0.2379
+03:06:10 [INFO]: Iteration 11/20: log_likelihood = -71.1826, val_log_likelihood = -101.2745, validation_AER = 0.2509, testing_AER = 0.2381
+03:32:36 [INFO]: Iteration 12/20: log_likelihood = -71.1626, val_log_likelihood = -101.5949, validation_AER = 0.2528, testing_AER = 0.2390
+03:59:08 [INFO]: Iteration 13/20: log_likelihood = -71.1477, val_log_likelihood = -101.8879, validation_AER = 0.2519, testing_AER = 0.2400
+04:25:38 [INFO]: Iteration 14/20: log_likelihood = -71.1363, val_log_likelihood = -102.1624, validation_AER = 0.2519, testing_AER = 0.2401
+04:52:05 [INFO]: Iteration 15/20: log_likelihood = -71.1274, val_log_likelihood = -102.4285, validation_AER = 0.2519, testing_AER = 0.2398
+05:18:36 [INFO]: Iteration 16/20: log_likelihood = -71.1203, val_log_likelihood = -102.6909, validation_AER = 0.2519, testing_AER = 0.2399
+05:44:56 [INFO]: Iteration 17/20: log_likelihood = -71.1145, val_log_likelihood = -102.9492, validation_AER = 0.2519, testing_AER = 0.2403
+06:11:22 [INFO]: Iteration 18/20: log_likelihood = -71.1098, val_log_likelihood = -103.2056, validation_AER = 0.2528, testing_AER = 0.2407
+06:37:43 [INFO]: Iteration 19/20: log_likelihood = -71.1060, val_log_likelihood = -103.4570, validation_AER = 0.2538, testing_AER = 0.2407
+07:04:10 [INFO]: Iteration 20/20: log_likelihood = -71.1028, val_log_likelihood = -103.6973, validation_AER = 0.2538, testing_AER = 0.2410
+07:04:10 [INFO]: Done training model.
