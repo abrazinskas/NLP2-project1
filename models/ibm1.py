@@ -14,13 +14,13 @@ class IBM1(IBM_Base):
         # setup parameters
         self.expected_counts_fr_and_eng = np.zeros(shape=[french_vocab_size, english_vocab_size], dtype="float32")
         # below collection of parameters is used both during E and M steps
-        # NOTICE THAT I'M SUING A
         self.prob_fr_given_eng = np.ones(shape=[french_vocab_size, english_vocab_size], dtype="float32")
         # normalization
         self.prob_fr_given_eng /= np.sum(self.prob_fr_given_eng, axis=0, keepdims=True)
         if training_type == "var":
             # Dirichlet's prior parameter (conj to categorical)
             self.alpha = alpha
+        # self.params_to_save = ["expected_counts_fr_and_eng", "prob_fr_given_eng"]
         self.params_to_save = []
         IBM_Base.__init__(self)
 
@@ -56,3 +56,5 @@ class IBM1(IBM_Base):
             lambdas = self.expected_counts_fr_and_eng + self.alpha
             self.prob_fr_given_eng = np.exp(digamma(lambdas + self.eps)
                                             - digamma(np.sum(lambdas, axis=0, keepdims=True) + self.eps))
+            # save for elbo computation
+            self.lambdas = lambdas

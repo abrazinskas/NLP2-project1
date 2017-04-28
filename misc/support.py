@@ -58,6 +58,8 @@ def evaluate_model(model, alignment_path, parallel_corpus, predictions_file_path
     # 1. Read in gold alignments
     gold_sets = read_naacl_alignments(alignment_path)
 
+    # pairs are in format (e_w_indx, f_w_indx)
+
     # 2. Here I have the predictions of my own algorithm
     predictions = []
     sentence_number = 0
