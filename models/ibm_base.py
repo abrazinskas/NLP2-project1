@@ -28,17 +28,20 @@ class IBM_Base():
                 log_likelihood += np.log(temp_ll + self.eps)
         return log_likelihood / nr_of_sent
 
-    # compute the lower-bound of the log-likelihood
+    # computes lower-bound of log-likelihood
     # I use indices in comments as in my notes
     def __compute_elbo(self, parallel_corpus):
         elbo = 0.
         nr_of_sent = 0
-        lambdas = self.expected_counts_fr_and_eng + self.alpha
+        if hasattr(self, "lambda"):
+            lambdas = self.lambdas
+        else:
+            lambdas = self.expected_counts_fr_and_eng + self.alpha
         # First part
         for f_sent, e_sent in parallel_corpus:
             nr_of_sent += 1
             for i, f_w in enumerate(f_sent):
-                posteriors = [self.prob_fr_given_eng[f_w, e_w] for e_w in e_sent] # q(a|\phi)
+                posteriors = [self.prob_fr_given_eng[f_w, e_w] for e_w in e_sent]  # q(a|\phi)
                 posteriors /= (np.sum(posteriors) + self.eps)
                 for j, e_w in enumerate(e_sent):
                     # 1. and 3. combined
@@ -47,7 +50,7 @@ class IBM_Base():
                     expect = np.log(self.prob_fr_given_eng[f_w, e_w] + self.eps)
                     elbo += posteriors[j] * expect
 
-        # Second part (one involving priors over theta)
+        # Second part (the one involving priors over theta) vectorized version
         expect = np.log(self.prob_fr_given_eng + self.eps)
         inner_loop = expect * (self.alpha - lambdas) + gammaln(lambdas + self.eps) - gammaln(self.alpha + self.eps)
         outer_loop = gammaln(self.french_vocab_size * self.alpha + self.eps) \
