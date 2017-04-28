@@ -1,9 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_lls(lls, labels, title, save_to):
+def plot_lls(lls, labels, title, save_to, plot_tail=None):
     plt.clf()
     iterations = np.arange(len(lls[0]))
+    lls = np.array(lls)
     for i, ll in enumerate(lls):
         plt.plot(iterations, ll, '-o', label=labels[i])
     plt.xticks(iterations)
@@ -11,6 +12,10 @@ def plot_lls(lls, labels, title, save_to):
     plt.ylabel("Log-likelihood")
     plt.legend()
     plt.title(title)
+    if plot_tail is not None:
+        space = 0.02 * np.min(lls[:, 1:])
+        plt.ylim(np.min(lls[:, -plot_tail:])+space, np.max(lls[:, -plot_tail:])-space)
+        plt.xlim(iterations[-plot_tail], iterations[-1] + 0.2)
     plt.savefig(save_to, format='eps', dpi=1000)
 
 def plot_ll(ll, title, save_to):
@@ -94,5 +99,6 @@ plot_aer(ibm1_long_aer, "IBM 1 validation AER for 20 iterations", "ibm1_long_aer
 plot_ll(ibm2_long_ll, "IBM 2 log-likelihood uniformly initialized for 20 iterations", "ibm2_long_ll.eps")
 plot_aer(ibm2_long_aer, "IBM 2 validation AER uniformly initialized for 20 iterations", "ibm2_long_ll.eps")
 plot_lls(ibm2_lls, ibm2_labels, "IBM 2 log-likelihood for different types of initialization", "ibm2_compare_lls.eps")
+plot_lls(ibm2_lls, ibm2_labels, "IBM 2 log-likelihood for different types of initialization", "ibm2_compare_lls_tail.eps", plot_tail=3)
 plot_aers(ibm2_aers, ibm2_labels, "IBM 2 AERs for different types of initialization", "ibm2_compare_aers.eps")
 plot_aers(ibm2_aers, ibm2_labels, "IBM 2 AERs for different types of initialization", "ibm2_compare_aers_tail.eps", plot_tail=3)
