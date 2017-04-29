@@ -22,7 +22,7 @@ def plot_lls(lls, labels, title, save_to, plot_tail=None):
 
 def plot_ll(ll, title, save_to):
     plt.clf()
-    iterations = np.arange(4, len(ll)+4)
+    iterations = np.arange(1, len(ll))
     plt.plot(iterations, ll, '-o')
     plt.xticks(iterations)
     plt.xlabel("Iterations")
