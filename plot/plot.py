@@ -20,7 +20,7 @@ def plot_lls(lls, labels, title, save_to, plot_tail=None):
         plt.xlim(iterations[-plot_tail], iterations[-1] + 0.2)
     plt.savefig(save_to, format='eps', dpi=1000)
 
-def plot_ll(ll, title, save_to):
+def plot_ll(ll, title, save_to, plot_tail=None):
     plt.clf()
     iterations = np.arange(1, len(ll)+1)
     plt.plot(iterations, ll, '-o')
@@ -28,8 +28,11 @@ def plot_ll(ll, title, save_to):
     plt.xlabel("Iterations")
     plt.ylabel("Log-likelihood")
     plt.title(title)
+    if plot_tail is not None:
+        space = 0.02 * np.min(ll[1:])
+        plt.ylim(np.min(ll[-plot_tail:])+space, np.max(ll[-plot_tail:])-space)
+        plt.xlim(iterations[-plot_tail], iterations[-1] + 0.2)
     plt.savefig(save_to, format='eps', dpi=1000)
-    # plt.show()
 
 def plot_aers(aers, labels, title, save_to, plot_tail=None):
     plt.clf()
@@ -118,7 +121,7 @@ ibm1_var_alpha_sel_aer=[[0.379147, 0.371783, 0.359465, 0.357074, 0.354187, 0.350
 ibm1_var_model_selection_aer = [0.379147, 0.371783, 0.359465, 0.357074, 0.354187, 0.350386, 0.349758, 0.346341, 0.344760,
                                 0.339863, 0.339530, 0.339530, 0.339530, 0.339530, 0.341153, 0.341153, 0.341153, 0.342131,
                                 0.34213, 0.342131]
-ibm1_var_model_selection_elbo = [-1801037.45, -1605596.42, -1498987.93, -1434939.31, -1392926.87, -1363610.85, -1342090.85,
+ibm1_var_model_selection_elbo = [0, 0, 0, -1801037.45, -1605596.42, -1498987.93, -1434939.31, -1392926.87, -1363610.85, -1342090.85,
                                  -1326046.84, -1313478.85, -1303466.85, -1295474.85, -1288798.85, -1283322.86, -1278518.86,
                                 -1274506.86, -1271078.86, -1268002.87
                                  ]
@@ -132,7 +135,7 @@ plot_aers(ibm1_var_alpha_sel_aer, labels=["1e-2", "1e-3", "1e-4", "1e-5"], title
 
 # IBM 1 model selection
 plot_aer(ibm1_var_model_selection_aer, "IBM 1 variational general model selection", save_to="ibm1_var_model_sel_aer.eps")
-plot_ll(ibm1_var_model_selection_elbo, "IBM 1 variational general model selection", save_to="ibm1_var_model_sel_elbo.eps")
+plot_ll(ibm1_var_model_selection_elbo, "IBM 1 variational general model selection", save_to="ibm1_var_model_sel_elbo.eps", plot_tail=17)
 
 
 # IBM 2 model selection
@@ -141,4 +144,3 @@ plot_aer(ibm2_var_model_selection_aer, "IBM 2 variational general model selectio
 
 plot_ll(ibm2_var_model_selection_elbo, "IBM 2 variational general model selection",
          save_to="ibm2_var_model_sel_elbo.eps")
-
