@@ -128,17 +128,17 @@ ibm2_var_model_selection_elbo = [-1299911.05, -1276955.00, -1253628.44, -1238829
 
 # IBM 1 alpha selection
 plot_aers(ibm1_var_alpha_sel_aer, labels=["1e-2", "1e-3", "1e-4", "1e-5"], title="IBM1 variational alpha selection",
-          save_to="plots/ibm1_var_alpha_sel_aer.eps")
+          save_to="ibm1_var_alpha_sel_aer.eps")
 
 # IBM 1 model selection
-plot_aer(ibm1_var_model_selection_aer, "IBM 1 variational general model selection", save_to="plots/ibm1_var_model_sel_aer.eps")
-plot_ll(ibm1_var_model_selection_elbo, "IBM 1 variational general model selection", save_to="plots/ibm1_var_model_sel_elbo.eps")
+plot_aer(ibm1_var_model_selection_aer, "IBM 1 variational general model selection", save_to="ibm1_var_model_sel_aer.eps")
+plot_ll(ibm1_var_model_selection_elbo, "IBM 1 variational general model selection", save_to="ibm1_var_model_sel_elbo.eps")
 
 
 # IBM 2 model selection
 plot_aer(ibm2_var_model_selection_aer, "IBM 2 variational general model selection",
-         save_to="plots/ibm2_var_model_sel_aer.eps")
+         save_to="ibm2_var_model_sel_aer.eps")
 
 plot_ll(ibm2_var_model_selection_elbo, "IBM 2 variational general model selection",
-         save_to="plots/ibm2_var_model_sel_elbo.eps")
+         save_to="ibm2_var_model_sel_elbo.eps")
 
